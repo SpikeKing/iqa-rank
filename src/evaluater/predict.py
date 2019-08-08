@@ -1,4 +1,3 @@
-
 import os
 import glob
 import json
@@ -16,7 +15,7 @@ def image_file_to_json(img_path):
 
 
 def image_dir_to_json(img_dir, img_type='jpg'):
-    img_paths = glob.glob(os.path.join(img_dir, '*.'+img_type))
+    img_paths = glob.glob(os.path.join(img_dir, '*.' + img_type))
 
     samples = []
     for img_path in img_paths:
@@ -61,7 +60,6 @@ def main(base_model_name, weights_file, image_source, predictions_file, img_form
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', '--base-model-name', help='CNN base model name', required=True)
     parser.add_argument('-w', '--weights-file', help='path of weights file', required=True)

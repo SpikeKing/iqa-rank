@@ -227,7 +227,7 @@ def extract_comments(directory):
             if os.path.splitext(file_name)[1] == '.py' and file_name != '__init__.py':
                 # with open
                 doc = get_comments_str(os.path.join(parent, file_name))
-                directory = os.path.join('docs', parent.replace('../src/', ''))
+                directory = os.path.join('docs', parent.replace('../src_code/', ''))
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
@@ -236,4 +236,4 @@ def extract_comments(directory):
                 output_file.close()
 
 
-extract_comments('../src/')
+extract_comments('../src_code/')

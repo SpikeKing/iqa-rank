@@ -1,10 +1,18 @@
 import os
+import sys
 import glob
 import json
 import argparse
-from utils.utils import calc_mean_score, save_json
-from handlers.model_builder import Nima
-from handlers.data_generator import TestDataGenerator
+
+from root_dir import MODELS_DIR, ROOT_DIR
+
+p = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
+if p not in sys.path:
+    sys.path.append(p)
+
+from src_code.utils.utils import calc_mean_score, save_json
+from src_code.handlers.model_builder import Nima
+from src_code.handlers.data_generator import TestDataGenerator
 
 
 def image_file_to_json(img_path):
@@ -61,11 +69,16 @@ def main(base_model_name, weights_file, image_source, predictions_file, img_form
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--base-model-name', help='CNN base model name', required=True)
-    parser.add_argument('-w', '--weights-file', help='path of weights file', required=True)
-    parser.add_argument('-is', '--image-source', help='image directory or file', required=True)
-    parser.add_argument('-pf', '--predictions-file', help='file with predictions', required=False, default=None)
+    # parser.add_argument('-b', '--base-model-name', help='CNN base model name', required=True)
+    # parser.add_argument('-w', '--weights-file', help='path of weights file', required=True)
+    # parser.add_argument('-is', '--image-source', help='image directory or file', required=True)
+    # parser.add_argument('-pf', '--predictions-file', help='file with predictions', required=False, default=None)
 
     args = parser.parse_args()
+    args.base_model_name = 'MobileNet'
+
+    args.weights_file = os.path.join(MODELS_DIR, 'MobileNet/weights_mobilenet_technical_0.11.hdf5')
+    args.image_source = os.path.join(ROOT_DIR, 'src_code/tests/test_images/42042.jpg')
+    args.predictions_file = None
 
     main(**args.__dict__)

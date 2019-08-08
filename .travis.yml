@@ -2,11 +2,11 @@ language: python
 python:
 - '3.6'
 install:
-- pip install -r src/requirements.txt
+- pip install -r src_code/requirements.txt
 - pip install tensorflow==1.13.1
 - pip install mkdocs==1.0.4 mkdocs-material==4.3.0
 script:
-- nosetests -vs src/tests
+- nosetests -vs src_code/tests
 - cd mkdocs && sh build_docs.sh
 deploy:
   provider: pages

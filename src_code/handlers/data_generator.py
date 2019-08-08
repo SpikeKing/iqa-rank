@@ -2,7 +2,7 @@
 import os
 import numpy as np
 import keras
-from utils import utils
+from src_code.utils import utils
 
 
 class TrainDataGenerator(keras.utils.Sequence):

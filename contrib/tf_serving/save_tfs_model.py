@@ -1,13 +1,17 @@
 import keras.backend as K
 import argparse
-from keras.applications.mobilenet import DepthwiseConv2D, relu6
+
+# from keras.applications.mobilenet import DepthwiseConv2D, relu6
+from tensorflow.contrib.layers import relu6
+from tensorflow.python.keras.layers import DepthwiseConv2D
+
 from keras.utils.generic_utils import CustomObjectScope
+
 from tensorflow.python.saved_model import builder as saved_model_builder
 from tensorflow.python.saved_model import tag_constants
-from tensorflow.python.saved_model.signature_def_utils_impl import \
-    predict_signature_def
+from tensorflow.python.saved_model.signature_def_utils_impl import predict_signature_def
 
-from src.handlers.model_builder import Nima
+from src_code.handlers.model_builder import Nima
 
 
 def main(base_model_name, weights_file, export_path):

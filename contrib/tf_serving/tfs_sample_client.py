@@ -1,11 +1,14 @@
+import os
 import json
 import argparse
 import keras
 import numpy as np
 import tensorflow as tf
-from src.utils import utils
+from src_code.utils import utils
 import grpc
 from tensorflow_serving.apis import predict_pb2, prediction_service_pb2_grpc
+
+from root_dir import ROOT_DIR
 
 TFS_HOST = 'localhost'
 TFS_PORT = 8500
@@ -46,9 +49,11 @@ def get_image_quality_predictions(image_path, model_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-ip', '--image-path', help='Path to image file.', required=True)
-    parser.add_argument(
-        '-mn', '--model-name', help='mobilenet_aesthetic or mobilenet_technical', required=True
-    )
+    # parser.add_argument('-ip', '--image-path', help='Path to image file.', required=True)
+    # parser.add_argument('-mn', '--model-name', help='mobilenet_aesthetic or mobilenet_technical', required=True)
     args = parser.parse_args()
+
+    args.image_path = os.path.join(ROOT_DIR, 'src_code/tests/test_images/42042.jpg')
+    args.model_name = 'mobilenet_technical'
+
     get_image_quality_predictions(**args.__dict__)

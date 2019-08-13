@@ -1,4 +1,3 @@
-
 import os
 import numpy as np
 import keras
@@ -7,6 +6,7 @@ from src_code.utils import utils
 
 class TrainDataGenerator(keras.utils.Sequence):
     '''inherits from Keras Sequence base object, allows to use multiprocessing in .fit_generator'''
+
     def __init__(self, samples, img_dir, batch_size, n_classes, basenet_preprocess, img_format,
                  img_load_dims=(256, 256), img_crop_dims=(224, 224), shuffle=True):
         self.samples = samples
@@ -24,14 +24,14 @@ class TrainDataGenerator(keras.utils.Sequence):
         return int(np.ceil(len(self.samples) / self.batch_size))  # number of batches per epoch
 
     def __getitem__(self, index):
-        batch_indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]  # get batch indexes
+        batch_indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]  # get batch indexes
         batch_samples = [self.samples[i] for i in batch_indexes]  # get batch samples
         X, y = self.__data_generator(batch_samples)
         return X, y
 
     def on_epoch_end(self):
         self.indexes = np.arange(len(self.samples))
-        if self.shuffle is True:
+        if self.shuffle is True:  # 训练
             np.random.shuffle(self.indexes)
 
     def __data_generator(self, batch_samples):
@@ -44,12 +44,12 @@ class TrainDataGenerator(keras.utils.Sequence):
             img_file = os.path.join(self.img_dir, '{}.{}'.format(sample['image_id'], self.img_format))
             img = utils.load_image(img_file, self.img_load_dims)
             if img is not None:
-                img = utils.random_crop(img, self.img_crop_dims)
-                img = utils.random_horizontal_flip(img)
-                X[i, ] = img
+                img = utils.random_crop(img, self.img_crop_dims)  # 训练
+                img = utils.random_horizontal_flip(img)  # 训练
+                X[i,] = img
 
             # normalize labels
-            y[i, ] = utils.normalize_labels(sample['label'])
+            y[i,] = utils.normalize_labels(sample['label'])
 
         # apply basenet specific preprocessing
         # input is 4D numpy array of RGB values within [0, 255]
@@ -59,7 +59,10 @@ class TrainDataGenerator(keras.utils.Sequence):
 
 
 class TestDataGenerator(keras.utils.Sequence):
-    '''inherits from Keras Sequence base object, allows to use multiprocessing in .fit_generator'''
+    """
+    inherits from Keras Sequence base object, allows to use multiprocessing in .fit_generator
+    """
+
     def __init__(self, samples, img_dir, batch_size, n_classes, basenet_preprocess, img_format,
                  img_load_dims=(224, 224)):
         self.samples = samples
@@ -75,7 +78,7 @@ class TestDataGenerator(keras.utils.Sequence):
         return int(np.ceil(len(self.samples) / self.batch_size))  # number of batches per epoch
 
     def __getitem__(self, index):
-        batch_indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]  # get batch indexes
+        batch_indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]  # get batch indexes
         batch_samples = [self.samples[i] for i in batch_indexes]  # get batch samples
         X, y = self.__data_generator(batch_samples)
         return X, y
@@ -93,11 +96,11 @@ class TestDataGenerator(keras.utils.Sequence):
             img_file = os.path.join(self.img_dir, '{}.{}'.format(sample['image_id'], self.img_format))
             img = utils.load_image(img_file, self.img_load_dims)
             if img is not None:
-                X[i, ] = img
+                X[i,] = img
 
             # normalize labels
             if sample.get('label') is not None:
-                y[i, ] = utils.normalize_labels(sample['label'])
+                y[i,] = utils.normalize_labels(sample['label'])
 
         # apply basenet specific preprocessing
         # input is 4D numpy array of RGB values within [0, 255]

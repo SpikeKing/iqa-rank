@@ -1,15 +1,14 @@
-
 import os
 import argparse
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
 from sklearn.model_selection import train_test_split
-from handlers.data_generator import TrainDataGenerator, TestDataGenerator
-from handlers.model_builder import Nima
-from handlers.samples_loader import load_samples
-from handlers.config_loader import load_config
-from utils.utils import ensure_dir_exists
-from utils.keras_utils import TensorBoardBatch
+from src_code.handlers.data_generator import TrainDataGenerator, TestDataGenerator
+from src_code.handlers.model_builder import Nima
+from src_code.handlers.samples_loader import load_samples
+from src_code.handlers.config_loader import load_config
+from src_code.utils.utils import ensure_dir_exists
+from src_code.utils.keras_utils import TensorBoardBatch
 
 
 def train(base_model_name,
@@ -30,12 +29,11 @@ def train(base_model_name,
           decay_dense=0,
           decay_all=0,
           **kwargs):
-
     # build NIMA model and load existing weights if they were provided in config
     nima = Nima(base_model_name, n_classes, learning_rate_dense, dropout_rate, decay=decay_dense)
     nima.build()
 
-    if existing_weights is not None:
+    if existing_weights is not None:  # 已经加载预训练模型，就不需要参数
         nima.nima_model.load_weights(existing_weights)
 
     # split samples in train and validation set, and initialize data generators
@@ -58,7 +56,7 @@ def train(base_model_name,
     # initialize callbacks TensorBoardBatch and ModelCheckpoint
     tensorboard = TensorBoardBatch(log_dir=os.path.join(job_dir, 'logs'))
 
-    model_save_name = 'weights_'+base_model_name.lower()+'_{epoch:02d}_{val_loss:.3f}.hdf5'
+    model_save_name = 'weights_' + base_model_name.lower() + '_{epoch:02d}_{val_loss:.3f}.hdf5'
     model_file_path = os.path.join(job_dir, 'weights', model_save_name)
     model_checkpointer = ModelCheckpoint(filepath=model_file_path,
                                          monitor='val_loss',
@@ -93,7 +91,7 @@ def train(base_model_name,
 
     nima.nima_model.fit_generator(generator=training_generator,
                                   validation_data=validation_generator,
-                                  epochs=epochs_train_dense+epochs_train_all,
+                                  epochs=epochs_train_dense + epochs_train_all,
                                   initial_epoch=epochs_train_dense,
                                   verbose=1,
                                   use_multiprocessing=multiprocessing_data_load,
@@ -105,23 +103,27 @@ def train(base_model_name,
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
-    parser.add_argument('-j', '--job-dir', help='train job directory with samples and config file', required=True)
-    parser.add_argument('-i', '--image-dir', help='directory with image files', required=True)
+    # parser.add_argument('-j', '--job-dir', help='train job directory with samples and config file', required=True)
+    # parser.add_argument('-i', '--image-dir', help='directory with image files', required=True)
 
     args = parser.parse_args()
 
-    image_dir = args.__dict__['image_dir']
-    job_dir = args.__dict__['job_dir']
+    # image_dir = args.__dict__['image_dir']
+    # job_dir = args.__dict__['job_dir']
+
+    image_dir = '/Users/wangchenlong/datasets/TID2013/distorted_images'
+    job_dir = '/Users/wangchenlong/workspace/iqa-rank/jobs/tid2013'
 
     ensure_dir_exists(os.path.join(job_dir, 'weights'))
     ensure_dir_exists(os.path.join(job_dir, 'logs'))
 
-    config_file = os.path.join(job_dir, 'config.json')
+    # config_file = os.path.join(job_dir, 'config.json')
+    config_file = os.path.join(job_dir, 'config_mobilenet_technical.json')
     config = load_config(config_file)
 
-    samples_file = os.path.join(job_dir, 'samples.json')
+    # samples_file = os.path.join(job_dir, 'samples.json')
+    samples_file = os.path.join(job_dir, 'tid_labels_train.json')
     samples = load_samples(samples_file)
 
     train(samples=samples, job_dir=job_dir, image_dir=image_dir, **config)

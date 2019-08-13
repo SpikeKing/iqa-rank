@@ -40,7 +40,7 @@ def predict(model, data_generator):
 def main(base_model_name, weights_file, image_source, predictions_file, img_format='jpg'):
     # load samples
     if os.path.isfile(image_source):
-        image_dir, samples = image_file_to_json(image_source)
+        image_dir, samples = image_file_to_json(image_source)  # 图片文件夹和样本
     else:
         image_dir = image_source
         samples = image_dir_to_json(image_dir, img_type='jpg')
@@ -48,9 +48,9 @@ def main(base_model_name, weights_file, image_source, predictions_file, img_form
     # build model and load weights
     nima = Nima(base_model_name, weights=None)
     nima.build()
-    nima.nima_model.load_weights(weights_file)
+    nima.nima_model.load_weights(weights_file)  # 加载参数
 
-    # initialize data generator
+    # initialize data generator，生成测试样本
     data_generator = TestDataGenerator(samples, image_dir, 64, 10, nima.preprocessing_function(),
                                        img_format=img_format)
 

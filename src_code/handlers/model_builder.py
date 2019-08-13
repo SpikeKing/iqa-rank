@@ -1,4 +1,3 @@
-
 import importlib
 from keras.models import Model
 from keras.layers import Dropout, Dense
@@ -15,7 +14,7 @@ class Nima:
         self.dropout_rate = dropout_rate
         self.loss = loss
         self.decay = decay
-        self.weights = weights
+        self.weights = weights  # 使用默认参数imagenet
         self._get_base_module()
 
     def _get_base_module(self):
@@ -25,16 +24,17 @@ class Nima:
         elif self.base_model_name == 'InceptionResNetV2':
             self.base_module = importlib.import_module('keras.applications.inception_resnet_v2')
         else:
-            self.base_module = importlib.import_module('keras.applications.'+self.base_model_name.lower())
+            # 导入Keras的MobileNet网络
+            self.base_module = importlib.import_module('keras.applications.' + self.base_model_name.lower())
 
     def build(self):
-        # get base model class
+        # get base model class，提取网络
         BaseCnn = getattr(self.base_module, self.base_model_name)
 
-        # load pre-trained model
+        # load pre-trained model, weights不为空, 则加载默认参数
         self.base_model = BaseCnn(input_shape=(224, 224, 3), weights=self.weights, include_top=False, pooling='avg')
 
-        # add dropout and dense layer
+        # add dropout and dense layer，增加1个dropout和dense全连接
         x = Dropout(self.dropout_rate)(self.base_model.output)
         x = Dense(units=self.n_classes, activation='softmax')(x)
 

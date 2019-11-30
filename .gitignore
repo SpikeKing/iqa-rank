@@ -124,3 +124,9 @@ mkdocs/docs/LICENSE.md
 
 # My
 /jobs
+/jobs/tid2013/config_mobilenet_technical.json
+/jobs/tid2013/tid_labels_train.json
+
+/data/model-tf
+/data/model-tf-old
+

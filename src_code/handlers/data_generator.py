@@ -1,6 +1,9 @@
 import os
 import numpy as np
 import keras
+
+import cv2
+from root_dir import ROOT_DIR
 from src_code.utils import utils
 
 
@@ -95,6 +98,11 @@ class TestDataGenerator(keras.utils.Sequence):
             # load and randomly augment image
             img_file = os.path.join(self.img_dir, '{}.{}'.format(sample['image_id'], self.img_format))
             img = utils.load_image(img_file, self.img_load_dims)
+            # print('[Info] {}'.format(img.shape))
+            # print('[Info] {}'.format(img[0:10]))
+            # print('[Info] img max: {}, min: {}'.format(np.max(img), np.min(img)))
+            # img_file = os.path.join(ROOT_DIR, 'data', 'tmp1.jpg')
+            # cv2.imwrite(img_file, img)
             if img is not None:
                 X[i,] = img
 
@@ -105,5 +113,7 @@ class TestDataGenerator(keras.utils.Sequence):
         # apply basenet specific preprocessing
         # input is 4D numpy array of RGB values within [0, 255]
         X = self.basenet_preprocess(X)
+        # print('[Info] max: {}, min: {}, avg: {}'.format(np.min(X), np.max(X), np.mean(X)))
 
+        # print(X[0,])
         return X, y

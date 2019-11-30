@@ -1,8 +1,11 @@
 import importlib
+
 from keras.models import Model
 from keras.layers import Dropout, Dense
 from keras.optimizers import Adam
 from src_code.utils.losses import earth_movers_distance
+
+import keras.applications.mobilenet
 
 
 class Nima:
@@ -39,6 +42,9 @@ class Nima:
         x = Dense(units=self.n_classes, activation='softmax')(x)
 
         self.nima_model = Model(self.base_model.inputs, x)
+
+        # pd_labels = self.nima_model.outputs[0]  # 输出
+        # print(pd_labels)
 
     def compile(self):
         self.nima_model.compile(optimizer=Adam(lr=self.learning_rate, decay=self.decay), loss=self.loss)
